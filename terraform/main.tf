@@ -17,23 +17,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# 1. Get the latest Ubuntu 22.04 AMI automatically
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  owners      = ["099720109477"] # Canonical (Official Ubuntu)
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
-# 2. Security Group
+# Security Group
 resource "aws_security_group" "k8s_sg" {
   name = "k8s-lab-sg"
   
@@ -63,19 +47,24 @@ resource "aws_security_group" "k8s_sg" {
   }
 }
 
-# 3. The EC2 Instance
+# The EC2 Instance
 resource "aws_instance" "k8s_node" {
-  ami           = data.aws_ami.ubuntu.id # Use the auto-found AMI
-  instance_type = "t2.micro"             # <--- CHANGED TO T2.MICRO (Classic Free Tier)
+  # Ubuntu 22.04 LTS (HVM) - Standard ID for us-east-1
+  ami           = "ami-0c7217cdde317cfec" 
+  
+  # UPGRADE: t3.medium (2 vCPU, 4GB RAM)
+  # Uses your $118 credit effectively.
+  instance_type = "t3.medium"
+  
   key_name      = "k8s-lab-key"
   
   vpc_security_group_ids = [aws_security_group.k8s_sg.id]
 
-  # User data script to install K3s + Swap
+  # User data script (Install K3s)
   user_data = file("${path.module}/../scripts/user-data.sh")
 
   tags = {
-    Name = "K3s-ArgoCD-FreeTier"
+    Name = "K3s-ArgoCD-Paid"
   }
 }
 
