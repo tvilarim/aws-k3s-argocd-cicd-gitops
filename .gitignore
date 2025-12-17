@@ -1,0 +1,23 @@
+--- Security: NEVER commit these ---
+
+.env
+.env.local
+.env.*
+secrets.txt
+credentials.csv
+aws_keys.csv
+*.pem
+*.key
+
+--- System & IDE files (Noise) ---
+
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+--- Application logs/vendor files ---
+
+vendor/
+node_modules/
+*.log
