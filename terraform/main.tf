@@ -8,7 +8,7 @@ terraform {
 
   # Stores the state in S3 so GitHub Actions doesn't "forget" the server
   backend "s3" {
-    bucket = "PUT_YOUR_BUCKET_NAME_HERE" 
+    bucket = "k8s-lab-state-1765995194" 
     key    = "terraform.tfstate"
     region = "us-east-1"
   }
