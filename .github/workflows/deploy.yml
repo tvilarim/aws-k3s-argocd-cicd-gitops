@@ -36,14 +36,15 @@ jobs:
         if [ "$SG_ID" == "None" ]; then
           echo "Creating Security Group..."
           SG_ID=$(aws ec2 create-security-group --group-name $SG_NAME --description "K8s Lab SG" --query "GroupId" --output text)
-          # Add Rules (SSH, NodePort, API)
-          aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0
-          aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 30080 --cidr 0.0.0.0/0
-          aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 6443 --cidr 0.0.0.0/0
-          echo "Security Group Created: $SG_ID"
         else
           echo "Security Group found: $SG_ID"
         fi
+
+        # ALWAYS ensure these rules exist (Use || true to ignore "already exists" errors)
+        echo "Ensuring Firewall Rules..."
+        aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0 || true
+        aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 30080 --cidr 0.0.0.0/0 || true
+        aws ec2 authorize-security-group-ingress --group-id $SG_ID --protocol tcp --port 6443 --cidr 0.0.0.0/0 || true
 
         echo "--- Checking Instance ---"
         # Check if a RUNNING instance with our specific tag already exists
@@ -54,7 +55,8 @@ jobs:
         if [ "$INSTANCE_ID" == "None" ]; then
           echo "No running instance found. Launching new one..."
           
-          # LAUNCH INSTANCE
+          # LAUNCH INSTANCE WITH 20GB DISK (The Fix!)
+          # We map /dev/sda1 to a 20GB gp3 volume
           INSTANCE_ID=$(aws ec2 run-instances \
             --image-id $AMI_ID \
             --count 1 \
@@ -62,6 +64,7 @@ jobs:
             --key-name $KEY_NAME \
             --security-group-ids $SG_ID \
             --user-data file://scripts/user-data.sh \
+            --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":20,"VolumeType":"gp3"}}]' \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$INSTANCE_NAME}]" \
             --query "Instances[0].InstanceId" \
             --output text)
