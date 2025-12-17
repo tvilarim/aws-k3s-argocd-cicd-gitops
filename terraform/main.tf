@@ -49,22 +49,21 @@ resource "aws_security_group" "k8s_sg" {
 
 # The EC2 Instance
 resource "aws_instance" "k8s_node" {
-  # Ubuntu 22.04 LTS (HVM) - Standard ID for us-east-1
+  # Ubuntu 22.04 LTS (x86_64) for us-east-1
   ami           = "ami-0c7217cdde317cfec" 
   
-  # UPGRADE: t3.medium (2 vCPU, 4GB RAM)
-  # Uses your $118 credit effectively.
-  instance_type = "t3.medium"
+  # APPROVED: t3.small is in your allowed list and has 2GB RAM!
+  instance_type = "t3.small"
   
   key_name      = "k8s-lab-key"
   
   vpc_security_group_ids = [aws_security_group.k8s_sg.id]
 
-  # User data script (Install K3s)
+  # We keep the swap script just for stability, even though t3.small is stronger
   user_data = file("${path.module}/../scripts/user-data.sh")
 
   tags = {
-    Name = "K3s-ArgoCD-Paid"
+    Name = "K3s-ArgoCD-t3small"
   }
 }
 
