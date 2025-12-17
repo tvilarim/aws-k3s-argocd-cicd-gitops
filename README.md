@@ -1,6 +1,6 @@
 # AWS K3s ArgoCD CI/CD GitOps
 
-[![Deploy via AWS CLI](https://github.com/tiagovilarim/aws-k3s-argocd-cicd-gitops/actions/workflows/deploy.yml/badge.svg)](https://github.com/tiagovilarim/aws-k3s-argocd-cicd-gitops/actions/workflows/deploy.yml)
+[![Deploy via AWS CLI](https://github.com/tvilarim/aws-k3s-argocd-cicd-gitops/actions/workflows/deploy.yml/badge.svg)](https://github.com/tvilarim/aws-k3s-argocd-cicd-gitops/actions/workflows/deploy.yml)
 
 **[🇺🇸 Read in English](#-aws-k3s-argocd-cicd-gitops-english)** | **[🇧🇷 Leia em Português](#-aws-k3s-argocd-cicd-gitops-português)**
 
