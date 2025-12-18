@@ -55,7 +55,7 @@ jobs:
         if [ "$INSTANCE_ID" == "None" ]; then
           echo "No running instance found. Launching new one..."
           
-          # LAUNCH INSTANCE WITH 20GB DISK (The Fix!)
+          # LAUNCH INSTANCE WITH 20GB DISK
           # We map /dev/sda1 to a 20GB gp3 volume
           INSTANCE_ID=$(aws ec2 run-instances \
             --image-id $AMI_ID \
